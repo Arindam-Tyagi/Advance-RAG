@@ -1,0 +1,5 @@
+Retrieval-Augmented Generation combines search with a language model.
+
+
+
+The model answers using passages found by the retriever.

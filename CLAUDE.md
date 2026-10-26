@@ -48,6 +48,12 @@ and evaluated before the next one starts.
 - Explicit error handling; never swallow exceptions silently.
 - No hardcoded paths, credentials or unexplained magic numbers; tunables go in config.
 - Small focused modules; no duplicated logic.
+- Plain, beginner-readable syntax: simple functions, for-loops, dataclasses.
+  Avoid clever one-liners, nested comprehensions, metaprogramming and
+  unusual language features.
+- Work in milestones split into phases; pause for review after each phase.
+- Before coding a phase, list each file and function with its purpose.
+  After coding, explain what each file and function does.
 
 ## AI engineering standards
 
