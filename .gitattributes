@@ -1,0 +1,22 @@
+# Normalize line endings: text files are stored with LF in the repository so
+# that diffs are identical on Windows (local development) and Linux (Docker,
+# future CI). Without this, Git's behavior depends on each machine's
+# core.autocrlf setting, which is currently unset on this machine.
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF to run correctly.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files: never normalize or diff as text.
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.parquet binary

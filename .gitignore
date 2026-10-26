@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# Secrets
+# ---------------------------------------------------------------------------
+# Real credentials live only in .env (never committed). The template is kept.
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# Python environments, caches and build output
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Private source documents and local datasets
+# ---------------------------------------------------------------------------
+# All local data stays out of Git. Small, sanitized test fixtures will live
+# under tests/fixtures/ instead, which is NOT ignored.
+data/
+
+# ---------------------------------------------------------------------------
+# Generated vector stores and indexes (rebuildable from source documents)
+# ---------------------------------------------------------------------------
+chroma/
+chroma_db/
+.chroma/
+vectorstores/
+indexes/
+*.faiss
+*.sqlite3
+
+# ---------------------------------------------------------------------------
+# Model weights and local model caches
+# ---------------------------------------------------------------------------
+# A blanket *.bin rule is intentionally omitted: it is too broad and could
+# silently hide legitimate files. Weights belong in models/ or a cache dir.
+models/
+.cache/
+*.safetensors
+*.gguf
+*.onnx
+*.pt
+*.pth
+*.ckpt
+
+# ---------------------------------------------------------------------------
+# Logs, temporary files and bulky experiment artifacts
+# ---------------------------------------------------------------------------
+logs/
+*.log
+tmp/
+*.tmp
+# Raw evaluation runs can be large and may echo private document text.
+# Sanitized summaries are kept elsewhere under evals/results/.
+evals/results/raw/
+
+# ---------------------------------------------------------------------------
+# Editor and OS files
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

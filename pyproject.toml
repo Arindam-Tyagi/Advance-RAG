@@ -1,0 +1,12 @@
+[project]
+name = "rag-app"
+version = "0.1.0"
+description = "Modular, evaluation-driven Retrieval-Augmented Generation (RAG) system."
+readme = "README.md"
+requires-python = ">=3.12"
+# Runtime dependencies are added only in the milestone that needs them.
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14"]
+build-backend = "uv_build"
