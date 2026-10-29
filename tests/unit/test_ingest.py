@@ -6,7 +6,7 @@ from pathlib import Path
 from pdf_helper import write_simple_pdf
 
 from rag_app.config import Settings
-from rag_app.ingest import compute_chunk_stats, main, run_ingestion
+from rag_app.ingest import compute_chunk_stats, main, read_chunks, run_ingestion, write_jsonl
 from rag_app.models import Chunk
 
 
@@ -95,3 +95,14 @@ def test_main_returns_error_code_when_no_documents_load(tmp_path, monkeypatch, c
 
     assert exit_code == 1
     assert "No documents were loaded" in capsys.readouterr().err
+
+
+def test_chunks_written_and_read_back_are_identical(tmp_path):
+    chunks = [
+        Chunk("a.pdf::0", "a.pdf", "Some text.", 0, 10, {"chunk_index": 0, "page_start": 1}),
+        Chunk("a.pdf::1", "a.pdf", "More text.", 8, 18, {"chunk_index": 1}),
+    ]
+    path = tmp_path / "chunks.jsonl"
+    write_jsonl(chunks, path)
+
+    assert read_chunks(path) == chunks

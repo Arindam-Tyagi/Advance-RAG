@@ -209,3 +209,44 @@ def validate_dataset(questions: list, documents_by_id: dict) -> list:
                 )
 
     return problems
+
+
+@dataclass
+class EvidenceSpan:
+    """Where an evidence quote sits in its document.
+
+    Attributes:
+        doc_id: The document containing the quote.
+        start: Index of the quote's first character in the document text.
+        end: Index just after the quote's last character (exclusive).
+    """
+
+    doc_id: str
+    start: int
+    end: int
+
+
+def locate_evidence(question: EvalQuestion, documents_by_id: dict) -> list:
+    """Find the exact position of every evidence quote of a question.
+
+    Returns:
+        One EvidenceSpan per evidence quote, in the same order.
+        Empty for unanswerable questions.
+
+    Raises:
+        ValueError: If a document is unknown or a quote is not found exactly
+            once. (Running validate_dataset first reports all such problems.)
+    """
+    spans = []
+    for evidence in question.evidence:
+        if evidence.doc_id not in documents_by_id:
+            raise ValueError(f"{question.question_id}: unknown doc_id '{evidence.doc_id}'")
+        matches = find_quote_spans(documents_by_id[evidence.doc_id], evidence.quote)
+        if len(matches) != 1:
+            raise ValueError(
+                f"{question.question_id}: quote found {len(matches)} times in "
+                f"{evidence.doc_id}, expected exactly once"
+            )
+        start, end = matches[0]
+        spans.append(EvidenceSpan(doc_id=evidence.doc_id, start=start, end=end))
+    return spans

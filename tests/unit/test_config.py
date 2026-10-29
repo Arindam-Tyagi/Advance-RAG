@@ -21,6 +21,8 @@ SETTING_VARIABLES = [
     "RAG_EMBEDDING_MODEL",
     "RAG_EMBEDDING_BATCH_SIZE",
     "RAG_QUERY_INSTRUCTION",
+    "RAG_INDEX_DIR",
+    "RAG_TOP_K",
 ]
 
 
@@ -114,4 +116,12 @@ def test_embedding_batch_size_must_be_positive(monkeypatch):
     monkeypatch.setenv("RAG_EMBEDDING_BATCH_SIZE", "0")
 
     with pytest.raises(ValueError, match="embedding_batch_size must be greater than 0"):
+        load_settings()
+
+
+def test_top_k_default_and_validation(monkeypatch):
+    assert load_settings().top_k == 5
+
+    monkeypatch.setenv("RAG_TOP_K", "0")
+    with pytest.raises(ValueError, match="top_k must be greater than 0"):
         load_settings()

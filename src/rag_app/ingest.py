@@ -24,6 +24,7 @@ from pathlib import Path
 from rag_app.chunking.chunker import ChunkingError, chunk_documents
 from rag_app.config import Settings, load_settings
 from rag_app.ingestion.loaders import load_documents
+from rag_app.models import Chunk
 
 DOCUMENTS_FILE_NAME = "documents.jsonl"
 
@@ -60,6 +61,34 @@ def write_jsonl(items: list, output_path: Path) -> None:
             file.write(line + "\n")
 
 
+def chunks_file_path(settings: Settings) -> Path:
+    """Return where the chunks for the configured strategy are stored."""
+    return settings.processed_data_dir / f"chunks_{settings.chunk_strategy}.jsonl"
+
+
+def read_chunks(path: Path) -> list:
+    """Read a chunks JSONL file (written by this command) back into Chunk objects.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
+    chunks = []
+    with open(path, encoding="utf-8") as file:
+        for line in file:
+            row = json.loads(line)
+            chunks.append(
+                Chunk(
+                    chunk_id=row["chunk_id"],
+                    doc_id=row["doc_id"],
+                    text=row["text"],
+                    start_char=row["start_char"],
+                    end_char=row["end_char"],
+                    metadata=row["metadata"],
+                )
+            )
+    return chunks
+
+
 def compute_chunk_stats(chunks: list) -> dict:
     """Return simple length statistics for a list of chunks.
 
@@ -92,7 +121,7 @@ def run_ingestion(settings: Settings) -> IngestionResult:
     chunks = chunk_documents(load_result.documents, settings)
 
     documents_path = settings.processed_data_dir / DOCUMENTS_FILE_NAME
-    chunks_path = settings.processed_data_dir / f"chunks_{settings.chunk_strategy}.jsonl"
+    chunks_path = chunks_file_path(settings)
     write_jsonl(load_result.documents, documents_path)
     write_jsonl(chunks, chunks_path)
 

@@ -10,6 +10,7 @@ from rag_app.evaluation.dataset import (
     EvidenceQuote,
     find_quote_spans,
     load_eval_questions,
+    locate_evidence,
     validate_dataset,
 )
 
@@ -191,3 +192,27 @@ def test_project_dataset_file_is_well_formed():
     for question in questions:
         ids.add(question.question_id)
     assert len(ids) == len(questions)
+
+
+# --- locate_evidence ----------------------------------------------------------------
+
+
+def test_evidence_is_located_at_exact_positions():
+    question = make_question(evidence=[EvidenceQuote("a.pdf", "BM25 uses keywords.")])
+
+    spans = locate_evidence(question, DOCUMENTS)
+
+    assert len(spans) == 1
+    assert spans[0].doc_id == "a.pdf"
+    assert DOCUMENTS["a.pdf"][spans[0].start:spans[0].end] == "BM25 uses\nkeywords."
+
+
+def test_unanswerable_question_has_no_spans():
+    assert locate_evidence(make_question("q9", "unanswerable", []), DOCUMENTS) == []
+
+
+def test_ambiguous_quote_cannot_be_located():
+    question = make_question(evidence=[EvidenceQuote("a.pdf", "BM25")])
+
+    with pytest.raises(ValueError, match="found 2 times"):
+        locate_evidence(question, DOCUMENTS)
